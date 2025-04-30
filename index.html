@@ -1,0 +1,77 @@
+
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>영어 구문 분석기</title>
+    <script src="https://unpkg.com/compromise"></script>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 30px; }
+        textarea { width: 100%; height: 80px; font-size: 18px; }
+        button { margin-top: 10px; padding: 10px 20px; font-size: 18px; }
+        .word-block { display: inline-block; text-align: center; margin: 10px; }
+        .pos { color: red; font-weight: bold; }
+        .role { color: blue; font-weight: bold; }
+        #result { margin-top: 30px; }
+    </style>
+</head>
+<body>
+    <h1>영어 구문 분석기 (한글 설명)</h1>
+    <textarea id="input" placeholder="영어 문장을 입력하세요"></textarea><br>
+    <button onclick="analyze()">분석하기</button>
+    <div id="result"></div>
+
+    <script>
+    function analyze() {
+        const text = document.getElementById('input').value.trim();
+        const doc = nlp(text);
+        const terms = doc.terms().data();
+
+        const posMapping = {
+            'Pronoun': '대명사',
+            'Verb': '동사',
+            'Noun': '명사',
+            'Determiner': '관사',
+            'Adjective': '형용사',
+            'Adverb': '부사',
+            'Preposition': '전치사',
+            'Conjunction': '접속사',
+            'QuestionWord': '의문사',
+            'Auxiliary': '조동사'
+        };
+
+        const roleMapping = {
+            'Pronoun': '주어',
+            'Noun': '보어',
+            'Determiner': '',
+            'Verb': '동사',
+            'Adjective': '형용어',
+            'Adverb': '부사어',
+            'Preposition': '전치사구',
+            'Conjunction': '연결어',
+            'QuestionWord': '의문어',
+            'Auxiliary': '조동사'
+        };
+
+        let resultHTML = '<div style="display:flex; flex-wrap:wrap;">';
+
+        terms.forEach(term => {
+            let mainTag = term.tags.find(tag => posMapping[tag]);
+            if (!mainTag) mainTag = 'Noun';
+            let posKorean = posMapping[mainTag] || mainTag;
+            let roleKorean = roleMapping[mainTag] || '';
+
+            resultHTML += `<div class="word-block">
+                <div class="pos">${posKorean}</div>
+                <div class="word">${term.text}</div>
+                <div class="role">${roleKorean}</div>
+            </div>`;
+        });
+
+        resultHTML += '</div>';
+
+        document.getElementById('result').innerHTML = resultHTML;
+    }
+    </script>
+</body>
+</html>
