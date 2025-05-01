@@ -19,11 +19,16 @@
     <script>
     async function analyze() {
         const sentence = document.getElementById('input').value;
-        const res = await fetch('/analyze', {
+
+        // 🔴 여기에 Render 서버 URL을 입력하세요!
+        const SERVER_URL = "https://anglish.onrender.com";
+
+        const res = await fetch(SERVER_URL + "/analyze", {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ sentence })
         });
+
         const data = await res.json();
         let html = "<div style='display:flex; flex-wrap:wrap;'>";
         data.forEach(tok => {
